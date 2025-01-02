@@ -13,7 +13,7 @@ function App() {
   const [count, setCount] = useState(0);
 
   return (
-    <div id="app" className="relative min-h-screen min-w-screen overflow-hidden">
+    <div id="app" className="relative min-h-screen scale-[95%] min-w-screen overflow-hidden">
       <CursorTrail /> {/* Add this here */}
       <div className="absolute" style={{ top: '13px', left: '19px' }}>
         <Projects />
