@@ -17,6 +17,7 @@ const corsOptions = {
     origin: 'https://hitanshu-portfolio.vercel.app/',  // Replace with your front-end URL or '*' for all
     methods: ['GET', 'POST'],
     allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
 };
 
 app.use(express.json());
