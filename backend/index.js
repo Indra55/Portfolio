@@ -10,8 +10,16 @@ require('dotenv').config();
 const ChatLog = require('./models/prompt');
 
 const app = express();
+
+// CORS configuration
+const corsOptions = {
+    origin: 'https://hitanshu-portfolio.vercel.app/',  // Replace with your front-end URL or '*' for all
+    methods: ['GET', 'POST'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+};
+
 app.use(express.json());
-app.use(cors());
+app.use(cors(corsOptions));
 
 // Initialize the Gemini model with LangChain
 const model = new ChatGoogleGenerativeAI({

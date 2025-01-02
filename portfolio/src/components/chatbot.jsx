@@ -38,7 +38,7 @@ const Chatbot = () => {
     setLoading(true);
 
     try {
-      const response = await fetch("http://localhost:5555/api/chat", {
+      const response = await fetch("https://portfolio-pgve.onrender.com/api/chat", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
