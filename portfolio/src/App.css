@@ -1,0 +1,24 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  
+}
+
+#app {
+  background-image: url('./assets/v.png');
+  background-size: cover; /* Ensure the image covers the entire screen */
+  background-position: center center; /* Center the image */
+  background-repeat: no-repeat;
+  height: 100vh; /* Full viewport height */
+  width: 100vw; /* Full viewport width */
+}
+.cursor-trail-cat {
+  width: 30px; /* Adjust the size of the cat image */
+  height: auto; /* Maintain aspect ratio */
+  transition: transform 0.1s ease-out, opacity 0.5s ease-out;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+}

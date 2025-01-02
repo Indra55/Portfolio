@@ -1,0 +1,15 @@
+.project-box {
+    width: 400px; /* Adjust as needed */
+    height: 300px; /* Adjust as needed */
+    position: relative;
+    background-color: #000;
+  }
+  
+  .project-content {
+    background: rgba(0, 0, 0, 0.5); /* Dark overlay */
+  }
+  
+  button {
+    transition: background-color 0.3s ease;
+  }
+  
