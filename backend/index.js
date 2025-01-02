@@ -14,7 +14,7 @@ const app = express();
 
 // CORS configuration
 const corsOptions = {
-    origin: 'https://hitanshu-portfolio.vercel.app/',  // Replace with your front-end URL or '*' for all
+    origin: 'https://hitanshu-portfolio.vercel.app',  // Replace with your front-end URL or '*' for all
     methods: ['GET', 'POST'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
