@@ -8,6 +8,7 @@ import CursorTrail from './components/CursorTrail';
 import SocialMedia from './components/SocialMedia'
 import Projects from './components/projects';
 import Chatbot from './components/chatbot';
+import CookieConsent from './components/CookieConsent';
  
 function App() {
   const [count, setCount] = useState(0);
@@ -46,7 +47,8 @@ function App() {
       <div className="relative" style={{ top: '-620px', left: '945px',scale:'93%' }}>
         <Chatbot /> 
       </div>
-     
+      <CookieConsent />
+
     </div>
   );
 }

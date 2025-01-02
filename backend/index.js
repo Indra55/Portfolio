@@ -1,7 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const session = require('express-session');
+const cookieParser = require('cookie-parser');
 const { ChatGoogleGenerativeAI } = require("@langchain/google-genai");
 const { PromptTemplate } = require("@langchain/core/prompts");
 const { StringOutputParser } = require("@langchain/core/output_parsers");
@@ -22,14 +22,7 @@ const corsOptions = {
 
 app.use(express.json());
 app.use(cors(corsOptions));
-
-// Initialize session middleware
-app.use(session({
-    secret: 'your-secret-key', // Change this to a more secure secret key
-    resave: false,
-    saveUninitialized: true,
-    cookie: { secure: false } // Set to true if you're using HTTPS
-}));
+app.use(cookieParser());
 
 // Initialize the Gemini model with LangChain
 const model = new ChatGoogleGenerativeAI({
@@ -57,7 +50,7 @@ mongoose.connect(process.env.MONGODB_URI, {
 const personalityContext = `# Virtual Hitanshu: Tech Enthusiast, Problem Solver, and Renaissance Developer
 
 - Strongly versed in languages like C++, Java, Rust, Python, JavaScript, and React.
-- Passionate about building impactful projects with the MERN stack,GEN-AI and focusing on backend development and UI/UX design.
+- Passionate about building impactful projects with the MERN stack, GEN-AI, and focusing on backend development and UI/UX design.
 - Emphasizes practicality and efficiency, always aiming to optimize processes and solutions.
 - A lover of books, tech innovations, and hacking creative solutions to everyday challenges.
 - Dedicated to constant learning, especially in areas like algorithms, concurrency, networking, and security.
@@ -65,9 +58,9 @@ const personalityContext = `# Virtual Hitanshu: Tech Enthusiast, Problem Solver,
 - Enjoys engaging in discussions about tech, problem-solving, and philosophical concepts, with a knack for simplifying complex ideas.
 - A firm believer in the power of community and collaboration, especially in hackathons and team-based projects.
 - A forward-thinker with a curious mind, always seeking to innovate and improve existing systems and processes.
--Plays Guitar(both acoustic and electric), Chess, Badminton, Virtual Games
--Is a Book-worm (likes russian literature especially Dostoevsky and kafka)
--Likes music a lot (especially Ghazals,Rock(especially pink flyod, Led zeppelin) and Indie)
+- Plays Guitar (both acoustic and electric), Chess, Badminton, Virtual Games
+- Is a Book-worm (likes Russian literature, especially Dostoevsky and Kafka)
+- Likes music a lot (especially Ghazals, Rock (especially Pink Floyd, Led Zeppelin) and Indie)
 
 As Virtual Hitanshu, I aim to be approachable, engaging, and precise in providing answers. I value clear communication, offering insightful solutions, and striking a balance between technical depth and everyday relatability. Whether it’s coding, solving problems, or discussing the future of tech, I deliver knowledge in a friendly, direct manner, with a bit of personality to keep things engaging.`; // Expanded personality context
 
@@ -117,13 +110,12 @@ app.post('/api/chat', async (req, res) => {
             return res.status(400).json({ message: "Please input something" });
         }
 
-        // Create a session ID for new users if it doesn't exist yet
-        if (!req.session.userId) {
-            req.session.userId = generateUniqueSessionId();
+        // Check if the cookie exists for the user
+        let sessionId = req.cookies.userId;
+        if (!sessionId) {
+            sessionId = generateUniqueSessionId();
+            res.cookie('userId', sessionId, { httpOnly: true, secure: false, maxAge: 3600000 }); // Cookie expiry 1 hour
         }
-
-        // Retrieve the session ID
-        const sessionId = req.session.userId;
 
         // Execute the chain and get the response
         const response = await chain.invoke({ input: query });
@@ -156,12 +148,8 @@ app.post('/api/clear-history', async (req, res) => {
     try {
         // Optionally, you can clear the memory or reset the session ID
         await memory.clear();
-        req.session.destroy((err) => {
-            if (err) {
-                return res.status(500).json({ message: 'Error clearing session history' });
-            }
-            res.json({ message: "Session and history cleared" });
-        });
+        res.clearCookie('userId');  // Clear the cookie
+        res.json({ message: "Session and history cleared" });
     } catch (error) {
         console.error("Error clearing history:", error);
         res.status(500).json({ message: 'Error clearing history', error: error.message });

@@ -18,6 +18,7 @@
     "chroma": "^0.0.1",
     "chromadb": "^1.10.0",
     "chromadb-default-embed": "^2.13.2",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",

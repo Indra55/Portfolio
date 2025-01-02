@@ -3,6 +3,7 @@ import { MessageCircle } from "lucide-react";
 import user from "../assets/user-profile.png"
 import me from "../assets/profilepic.jpg"
  
+ 
 const Chatbot = () => {
   const [query, setQuery] = useState("");
   const [messages, setMessages] = useState([]);
@@ -29,24 +30,26 @@ const Chatbot = () => {
 
   const sendMessage = async () => {
     if (!query.trim()) return;
-
+  
     setMessages((prevMessages) => [
       ...prevMessages,
       { type: "user", text: query },
     ]);
-
+  
     setLoading(true);
-
+  
     try {
-      const response = await fetch("https://portfolio-pgve.onrender.com/api/chat", {
-        method: "POST",
+      const response = await fetch('https://portfolio-pgve.onrender.com/api/chat', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ query }),
+        body: JSON.stringify({ query: query }),
+        credentials: 'include',
       });
-
+  
       const data = await response.json();
+      
       setMessages((prevMessages) => [
         ...prevMessages,
         { type: "ai", text: data.response },
@@ -58,12 +61,13 @@ const Chatbot = () => {
         { type: "ai", text: "Sorry, something went wrong." },
       ]);
     }
-
+  
     setQuery("");
     setLoading(false);
   };
 
   return (
+    <>
     <div className="h-[980px] w-[888px] text-white bg-[rgba(255, 255, 255, 0.1)] backdrop-blur-md rounded-xl p-6">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-3xl font-bold text-[#f8c3b8] font-[Silkscreen]">
@@ -154,6 +158,8 @@ const Chatbot = () => {
         </div>
       </div>
     </div>
+     </>
+
   );
 };
 
