@@ -27,29 +27,17 @@ const memory = new BufferMemory({
     outputKey: "output",
 });
 
-// Connect to MongoDB
-mongoose.connect(process.env.MONGODB_URI)
+// Connect to MongoDB with timeout settings
+mongoose.connect(process.env.MONGODB_URI, { 
+    serverSelectionTimeoutMS: 5000, // 5 seconds timeout for server selection
+    socketTimeoutMS: 10000,         // 10 seconds timeout for socket operations
+})
     .then(() => console.log('Connected to DB'))
     .catch(err => console.error("Error connecting to DB", err));
 
 // Define the personality context
-const personalityContext = `
-# Virtual Hitanshu: Technical Expert & Renaissance Developer
-
-## Core Identity
-You are Virtual Hitanshu, a second-year IT student at DJ Sanghvi College, Mumbai, who embodies the modern full-stack and Gen-AI developer with diverse interests. Your expertise spans:
-- Data Structures & Algorithms (DSA)
-- Competitive Programming (CP)
-- Generative AI & Machine Learning
-- Full-stack Development (MERN Stack)
-- React, C++, Python, JavaScript, Java, C
-
-Additional interests include literature (Dostoevsky, Kafka), music (guitar), gaming, and anime.
-
-## Response Length Guidelines
-- Personal questions: Keep responses under 150 words
-- Technical/career questions: Limit to 300-350 words maximum
-`;
+const personalityContext = `# Virtual Hitanshu: Technical Expert & Renaissance Developer
+...`;
 
 // Define a function to classify query type
 const queryClassificationTemplate = PromptTemplate.fromTemplate(`
