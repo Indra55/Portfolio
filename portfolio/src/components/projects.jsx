@@ -23,7 +23,7 @@ const Projects = () => {
       longDescription: "",
       technologies: ["Python", "Streamlit", "Pandas", "Plotly"],
       website: "https://readwiser.streamlit.app/",
-      github: "https://github.com/Indra55/book_recommendation_system_streamlitt",
+      github: "https://github.com/Indra55/book_recommendation_system_streamlit",
     },
     {
       title: "Katha Kritique",
