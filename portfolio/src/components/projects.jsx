@@ -69,8 +69,8 @@ const Projects = () => {
         "Nirvana AI is a chatbot designed to provide empathetic and intelligent conversations to support users dealing with mental health issues. It offers real-time guidance, emotional support, and helpful resources."
       ],
       technologies: ["React.js", "Node.js", "Express", "MongoDB", "Google Generative AI"],
-      website: "https://google-genai-hackathon.vercel.app/main",
-      github: "https://github.com/Indra55/google-genai-hackathon"
+      website: "https://nirvana-ai.vercel.app/",
+      github: "https://github.com/Indra55/nirvana-ai"
     },
     {
       title: "Cold Connect",
