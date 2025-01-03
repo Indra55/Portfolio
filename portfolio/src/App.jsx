@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './App.css';
 import Profile from './components/profile';
 import Resume from './components/resume';
@@ -11,7 +11,24 @@ import Chatbot from './components/chatbot';
 import CookieConsent from './components/CookieConsent';
  
 function App() {
-  const [count, setCount] = useState(0);
+  const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 1024);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsDesktop(window.innerWidth >= 1024);
+    };
+    
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  if (!isDesktop) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-900 text-white text-2xl">
+        Please open this on a desktop for the best experience.
+      </div>
+    );
+  }
 
   return (
     <div id="app" className="relative overflow-hidden">
@@ -20,9 +37,7 @@ function App() {
         <Projects />
       </div>
       <div className='scale-[128%] mr-[1800px] mt-[90px]'>
-
-     
-     
+      
       <div className="absolute" style={{ top: '193px', left: '201px' }}>
         <Profile />
       </div>
@@ -48,7 +63,6 @@ function App() {
         <Chatbot /> 
       </div>
       <CookieConsent />
-
     </div>
   );
 }
