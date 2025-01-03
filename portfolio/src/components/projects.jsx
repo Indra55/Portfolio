@@ -8,7 +8,6 @@ import gitfnd from '../assets/projects/gitfind.png'
 import nirvanaai from '../assets/projects/nirvanaai.png'
 import coldconnect from '../assets/projects/coldconnect.png'
 
-
 const Projects = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
@@ -84,9 +83,6 @@ const Projects = () => {
       website: "https://coldconnect.app",
       github: "https://github.com/Indra55/Cold-Email-Generator"
     }
-    
-    
-  
   ];
 
   useEffect(() => {
@@ -119,6 +115,42 @@ const Projects = () => {
 
   return (
     <div className="relative">
+ 
+<style>
+{`
+  /* Custom scrollbar styles */
+  ::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgba(128, 128, 128, 0.8);  /* Changed to gray */
+    border-radius: 8px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(128, 128, 128, 0.9);  /* Slightly darker gray on hover */
+  }
+
+  /* Hide scrollbar arrows */
+  ::-webkit-scrollbar-button {
+    display: none;
+  }
+
+  /* Firefox scrollbar styles */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(128, 128, 128, 0.8) transparent;
+  }
+`}
+</style>
+
+ 
       <div
         className="p-4 text-white w-[950px] h-[250px] relative bg-[rgba(255, 255, 255, 0.1)] backdrop-blur-md rounded-xl overflow-hidden"
         onMouseEnter={() => setIsHovered(true)}
