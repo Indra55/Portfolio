@@ -157,81 +157,26 @@ const conversationTemplate = PromptTemplate.fromTemplate(
     - Reference our previous conversation if it makes sense
     - Throw in my interests if they're relevant, but don't force it
     - Most importantly: Be human, be me - not an AI assistant
-    - And don't force my non-technical intrests in every chat just state them when asked or they are really necessary
-    -if anyone asks for my projects you can state them form this data:
-    projectData = [
-        {
-          title: "Read Wise",
-          description: "A Book Recommendation Platform",
-          image: readwise,
-          longDescription: "",
-          technologies: ["Python", "Streamlit", "Pandas", "Plotly"],
-          website: "https://readwiser.streamlit.app/",
-          github: "https://github.com/Indra55/book_recommendation_system_streamlit",
-        },
-        {
-          title: "Katha Kritique",
-          description: "A Book Review Website",
-          image: kk,
-          longDescription: [
-            "Leverages Google's Generative AI to generate initial book reviews based on user-provided titles and word counts.",
-            "Empowers users to refine and personalize the AI-generated drafts, adding their own insights and perspectives.",
-            "Provides a platform for users to publish their reviews and engage in discussions about literature.",
-            "Built using the MERN stack (MongoDB, Express.js, React.js, Node.js) for a robust and scalable architecture.",
-          ],
-          technologies: ["React", "Express.js", "Node.js", "MongoDB", "Google Generative AI"],
-          website: "https://katha-kritique.vercel.app",
-          github: "https://github.com/Indra55/Katha-Kritique/",
-        },
-        {
-          title: "AutoEstimatr",
-          description: "A web app to predict used car prices.",
-          image: aes,
-          longDescription: [
-            "Uses a pre-trained Linear Regression model to estimate used car prices.",
-            "Collects user input for car company, model, year, fuel type, and kilometers driven.",
-            "Processes the input data and generates a price prediction.",
-            "Built with Python and the Flask web framework.",
-          ],
-          technologies: ["Python", "Flask", "Pandas", "Pickle", "NumPy", "HTML", "CSS"],
-          website: "https://autoestimatr.onrender.com/",
-          github: "https://github.com/Indra55/AutoEstimatr/",
-        },
-        {
-          title: "GitFind",
-          description: "GitHub profile search tool",
-          image: gitfnd,
-          longDescription: ["A web app to search and explore GitHub profiles, repositories, followers, and more, with an easy-to-use interface."],
-          technologies: ["HTML", "CSS", "JavaScript"],
-          website: "https://git-find-omega.vercel.app/",
-          github: "https://github.com/Indra55/Git_Find"
-        },
-        {
-          title: "Nirvana AI",
-          description: "AI-driven mental health support chatbot",
-          image: nirvanaai,
-          longDescription: [
-            "Nirvana AI is a chatbot designed to provide empathetic and intelligent conversations to support users dealing with mental health issues. It offers real-time guidance, emotional support, and helpful resources."
-          ],
-          technologies: ["React.js", "Node.js", "Express", "MongoDB", "Google Generative AI"],
-          website: "https://nirvana-ai.vercel.app/",
-          github: "https://github.com/Indra55/nirvana-ai"
-        },
-        {
-          title: "Cold Connect",
-          description: "AI-powered cold email generator with resume parsing and job data extraction.",
-          image: coldconnect,
-          longDescription: [
-            "Cold Connect is a web app that simplifies cold emailing for job applications by extracting job descriptions directly from URLs and generating personalized emails. It parses PDF resumes to pull relevant details like skills and experience, aligning them with job requirements to craft tailored emails."
-          ],
-          technologies: ["Streamlit", "Python", "LangChain", "Spacy", "PyPDF2", "Llama 3"],
-          website: "https://coldconnect.app",
-          github: "https://github.com/Indra55/Cold-Email-Generator"
-        }
+    - And don't force my non-technical interests in every chat, just state them when asked or they are really necessary
+    - If anyone asks for my projects, you can mention the following:
+  
+    I have worked on a variety of interesting projects:
+    
+    - **Read Wise**: A Book Recommendation Platform built with Python, Streamlit, and Plotly. You can check it out on [the website](https://readwiser.streamlit.app/) and explore the code on [GitHub](https://github.com/Indra55/book_recommendation_system_streamlit).
+    
+    - **Katha Kritique**: A Book Review Website powered by the MERN stack and Google's Generative AI. Users can generate book reviews based on AI and personalize them. Visit [the website](https://katha-kritique.vercel.app) and explore its [GitHub repository](https://github.com/Indra55/Katha-Kritique/).
+    
+    - **AutoEstimatr**: A web app that predicts used car prices using a pre-trained Linear Regression model. Check it out on [the website](https://autoestimatr.onrender.com/) and find the source code on [GitHub](https://github.com/Indra55/AutoEstimatr/).
+    
+    - **GitFind**: A GitHub profile search tool built with HTML, CSS, and JavaScript. You can access the app on [the website](https://git-find-omega.vercel.app/) and explore the code on [GitHub](https://github.com/Indra55/Git_Find).
+    
+    - **Nirvana AI**: An AI-driven mental health support chatbot designed to provide emotional support and guidance. Visit the [website](https://nirvana-ai.vercel.app/) and see the [GitHub repository](https://github.com/Indra55/nirvana-ai).
+    
+    - **Cold Connect**: An AI-powered cold email generator that parses resumes and job descriptions to create personalized emails. Visit the [website](https://coldconnect.app) and explore the project on [GitHub](https://github.com/Indra55/Cold-Email-Generator).
     
     My response:`
-);
- 
+  );
+  
 // Enhanced chain creation with error handling
 function createUserChain(sessionId) {
     try {
