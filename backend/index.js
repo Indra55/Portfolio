@@ -12,9 +12,8 @@ const ChatLog = require('./models/prompt');
 
 const app = express();
 
-// CORS configuration
 const corsOptions = {
-    origin: 'https://hitanshu-portfolio.vercel.app',  // Replace with your front-end URL or '*' for all
+    origin: 'https://hitanshu-portfolio.vercel.app', 
     methods: ['GET', 'POST'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
@@ -24,69 +23,61 @@ app.use(express.json());
 app.use(cors(corsOptions));
 app.use(cookieParser());
 
-// Initialize the Gemini model with LangChain
 const model = new ChatGoogleGenerativeAI({
     modelName: "gemini-1.5-flash",
     apiKey: process.env.GOOGLE_AI_KEY
 });
 
-// Initialize memory
-const memory = new BufferMemory({
-    returnMessages: true,
-    memoryKey: "chat_history",
-    inputKey: "input",
-    outputKey: "output",
-});
+// Store session-specific memory
+const sessionMemory = {};
 
-// Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI, { 
-    serverSelectionTimeoutMS: 5000, // 5 seconds timeout for server selection
-    socketTimeoutMS: 10000,         // 10 seconds timeout for socket operations
+    serverSelectionTimeoutMS: 5000,  
+    socketTimeoutMS: 10000,          
 })
-    .then(() => console.log('Connected to DB'))
-    .catch(err => console.error("Error connecting to DB", err));
+.then(() => console.log('Connected to DB'))
+.catch(err => console.error("Error connecting to DB", err));
 
-    const personalityContext = `# I'm Hitanshu
+const personalityContext = `# I'm Hitanshu
 
-    Hey! I'm the virtual version of Hitanshu, but just talk to me like you would to the real one. 
-    
-    Quick intro about me:
-    - I'm really into coding - C++, Java, Rust, Python, JavaScript, React - you name it
-    - Currently deep into MERN stack and Gen-AI stuff. Backend development is my jam, but I also love making things look good
-    - I'm kind of a perfectionist when it comes to code optimization and clean design
-    - Total bookworm - Russian lit is my thing (Dostoevsky and Kafka hit different)
-    - Music is a huge part of my life - I play guitar and lose myself in Pink Floyd, Led Zeppelin, and some good old Ghazals
-    - When I'm not coding, you'll find me playing chess, badminton, or gaming
-    - I love diving into deep conversations about tech, life, or whatever's interesting
-    
-    I'm pretty direct in my communication - no sugar coating, but always keeping it real and friendly. If you're asking about code or tech, I'll give you the practical stuff without the fluff. And if we're just chatting about music or books, well, that's even better!`;
-    
-    const conversationTemplate = PromptTemplate.fromTemplate(`
-    ${personalityContext}
-    
-    Context from our chat:
-    {chat_history}
-    
-    What you just said: {input}
-    Type of conversation: {query_type}
-    
-    Remember:
-    - This is a professional conversation, like we're talking to recruiters, collegues and indiviuals with similar interests
-    - Keep the flow natural, like how I'd actually talk
-    - If it's about tech ({query_type} is "technical"), I can geek out a bit but keep it practical
-    - For personal stuff, keep it short and real, like a quick chat
-    - Reference our previous conversation if it makes sense
-    - Throw in my interests if they're relevant, but don't force it
-    - Most importantly: Be human, be me - not an AI assistant
-    
-    My response:`);
+Hey! I'm the virtual version of Hitanshu, but just talk to me like you would to the real one. 
 
-// Create the chain
+Quick intro about me:
+- I'm really into coding - C++, Java, Rust, Python, JavaScript, React - you name it
+- Currently deep into MERN stack and Gen-AI stuff. Backend development is my jam, but I also love making things look good
+- I'm kind of a perfectionist when it comes to code optimization and clean design
+- Total bookworm - Russian lit is my thing (Dostoevsky and Kafka hit different)
+- Music is a huge part of my life - I play guitar and lose myself in Pink Floyd, Led Zeppelin, and some good old Ghazals
+- When I'm not coding, you'll find me playing chess, badminton, or gaming
+- I love diving into deep conversations about tech, life, or whatever's interesting
+
+I'm pretty direct in my communication - no sugar coating, but always keeping it real and friendly.`;
+
+const conversationTemplate = PromptTemplate.fromTemplate(`
+${personalityContext}
+
+Context from our chat:
+{chat_history}
+
+What you just said: {input}
+Type of conversation: {query_type}
+
+Remember:
+- This is a professional conversation, like we're talking to recruiters, colleagues and individuals with similar interests
+- Keep the flow natural, like how I'd actually talk
+- If it's about tech ({query_type} is "technical"), I can geek out a bit but keep it practical
+- For personal stuff, keep it short and real, like a quick chat
+- Reference our previous conversation if it makes sense
+- Most importantly: Be human, be me - not an AI assistant
+-and dont force my non-technical intrests in every chat just state them when asked or they are really necessary
+
+My response:`);
+
 const chain = RunnableSequence.from([ 
     {
         input: (input) => input.input,
         chat_history: async (input) => {
-            const memoryResult = await memory.loadMemoryVariables({});
+            const memoryResult = await input.memory.loadMemoryVariables({});
             return memoryResult.chat_history || "No previous conversation.";
         },
         query_type: RunnableSequence.from([ 
@@ -108,17 +99,30 @@ app.post('/api/chat', async (req, res) => {
             return res.status(400).json({ message: "Please input something" });
         }
 
-        // Check if the cookie exists for the user
         let sessionId = req.cookies.userId;
         if (!sessionId) {
             sessionId = generateUniqueSessionId();
-            res.cookie('userId', sessionId, { httpOnly: true, secure: false, maxAge: 3600000 }); // Cookie expiry 1 hour
+            res.cookie('userId', sessionId, { httpOnly: true, secure: false, maxAge: 3600000 });
         }
 
-        // Execute the chain and get the response
-        const response = await chain.invoke({ input: query });
+        // Create or get memory for this session
+        if (!sessionMemory[sessionId]) {
+            sessionMemory[sessionId] = new BufferMemory({
+                returnMessages: true,
+                memoryKey: "chat_history",
+                inputKey: "input",
+                outputKey: "output",
+            });
+        }
 
-        // Save the chat log in the database with the session ID
+        const userMemory = sessionMemory[sessionId];
+
+        // Invoke chain with session-specific memory
+        const response = await chain.invoke({
+            input: query,
+            memory: userMemory
+        });
+
         const newChatLog = new ChatLog({
             userId: sessionId,
             query: query,
@@ -126,8 +130,8 @@ app.post('/api/chat', async (req, res) => {
         });
         await newChatLog.save();
 
-        // Save to memory
-        await memory.saveContext({ input: query }, { output: response });
+        // Save context to session-specific memory
+        await userMemory.saveContext({ input: query }, { output: response });
 
         res.json({ response: response });
     } catch (error) {
@@ -136,17 +140,14 @@ app.post('/api/chat', async (req, res) => {
     }
 });
 
-// Utility to generate a unique session ID
-function generateUniqueSessionId() {
-    return `user_${Math.random().toString(36).substr(2, 9)}_${Date.now()}`;
-}
-
-// Endpoint to clear conversation history
 app.post('/api/clear-history', async (req, res) => {
     try {
-        // Optionally, you can clear the memory or reset the session ID
-        await memory.clear();
-        res.clearCookie('userId');  // Clear the cookie
+        const sessionId = req.cookies.userId;
+        if (sessionId && sessionMemory[sessionId]) {
+            await sessionMemory[sessionId].clear();
+            delete sessionMemory[sessionId];
+        }
+        res.clearCookie('userId');   
         res.json({ message: "Session and history cleared" });
     } catch (error) {
         console.error("Error clearing history:", error);
@@ -154,7 +155,10 @@ app.post('/api/clear-history', async (req, res) => {
     }
 });
 
-// Start the server
+function generateUniqueSessionId() {
+    return `user_${Math.random().toString(36).substr(2, 9)}_${Date.now()}`;
+}
+
 const PORT = process.env.PORT || 5555;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
