@@ -177,8 +177,7 @@ const conversationTemplate = PromptTemplate.fromTemplate(
     My response:`
   );
   
-// Enhanced chain creation with error handling
-function createUserChain(sessionId) {
+ function createUserChain(sessionId) {
     try {
         const userMemory = getUserMemory(sessionId);
         
@@ -211,11 +210,10 @@ function createUserChain(sessionId) {
     }
 }
 
-// Rate limiting middleware
-const rateLimit = require('express-rate-limit');
+ const rateLimit = require('express-rate-limit');
 const chatLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 100 // limit each IP to 100 requests per windowMs
+    windowMs: 5 * 60 * 1000,   
+    max: 100  
 });
 
 app.post('/api/chat', chatLimiter, async (req, res) => {
@@ -241,8 +239,7 @@ app.post('/api/chat', chatLimiter, async (req, res) => {
 
         const response = await userChain.invoke({ input: query });
 
-        // Save chat log with validation
-        const newChatLog = new ChatLog({
+         const newChatLog = new ChatLog({
             userId: sessionId,
             query: query,
             response: response,
@@ -252,8 +249,7 @@ app.post('/api/chat', chatLimiter, async (req, res) => {
 
         await userMemory.saveContext({ input: query }, { output: response });
         
-        // Update last accessed timestamp
-        const memoryData = userMemories.get(sessionId);
+         const memoryData = userMemories.get(sessionId);
         if (memoryData) {
             memoryData.lastAccessed = Date.now();
         }
@@ -268,8 +264,7 @@ app.post('/api/chat', chatLimiter, async (req, res) => {
     }
 });
 
-// Enhanced error handling for clear-history endpoint
-app.post('/api/clear-history', async (req, res) => {
+ app.post('/api/clear-history', async (req, res) => {
     try {
         const sessionId = req.cookies.userId;
         if (sessionId) {
@@ -292,8 +287,7 @@ function generateUniqueSessionId() {
     return `user_${Math.random().toString(36).substr(2, 9)}_${Date.now()}`;
 }
 
-// Graceful shutdown handling
-process.on('SIGTERM', shutdown);
+ process.on('SIGTERM', shutdown);
 process.on('SIGINT', shutdown);
 
 async function shutdown() {
